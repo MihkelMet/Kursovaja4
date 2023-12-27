@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import requests
 import os
-from config import URL_SJ
+from config import URL_SJ, JSON_SJ
 from src.data_json.work_with_json import WorkWithJson
 
 load_dotenv()
@@ -20,5 +20,10 @@ class RequestsSJ(WorkWithJson):
         headers = {
             "X-Api-App-Id": os.getenv("API_KEY")
         }
-        responce = requests.get(self.url, params=self.params, headers=headers)
-        return WorkWithJson.save_json(responce.json()["objects"])
+        try:
+            responce = requests.get(self.url, params=self.params, headers=headers)
+            responce.raise_for_status()
+        except requests.exceptions.RequestException as errex:
+            print("Exception request")
+        else:
+            return WorkWithJson.save_json(responce.json()["objects"], JSON_SJ)

@@ -1,36 +1,34 @@
 import json
 from abc import ABC, abstractmethod
 
-from config import JSON_HH
+from config import JSON_HH, JSON_SJ
 
 
 class Vacancy(ABC):
     """Абстрактный класс для всех вакансий"""
-
-    def __init__(self, title: str, link: str, description: str, salary: dict) -> None:
-        self.title = title
-        self.link = link
-        self.description = description
-        self.salary = salary
 
     @classmethod
     @abstractmethod
     def get_data(cls):
         pass
 
+    @abstractmethod
     def __gt__(self, other):
-        if isinstance(other, self.__class__):
-            return self.salary > other.salary
-        raise ValueError("Можно сравнивать только объекты вакансий")
+        pass
 
+    @abstractmethod
     def __lt__(self, other):
-        if isinstance(other, self.__class__):
-            return self.salary < other.salary
-        raise ValueError("Можно сравнивать только объекты вакансий")
+        pass
 
 
 class VacancyHH(Vacancy):
     """Класс для вакансий с сайта HH"""
+
+    def __init__(self, title: str, link: str, description: str, salary: dict) -> None:
+        self.title = title
+        self.link = link
+        self.description = description
+        self.salary = salary
 
     def __repr__(self):
         return (
@@ -43,7 +41,7 @@ class VacancyHH(Vacancy):
 
     @classmethod
     def get_data(cls) -> None:
-        with open('cache_hh.json', "r") as file:
+        with open(JSON_HH, "r") as file:
             vacancies = json.load(file)
             vacancy_s = []
             for i in vacancies:
@@ -62,9 +60,25 @@ class VacancyHH(Vacancy):
         for vacancy in sorted(vacancy_s):
             print(vacancy)
 
+    def __gt__(self, other):
+        if isinstance(other, self.__class__):
+            return self.salary > other.salary
+        raise ValueError("Можно сравнивать только объекты вакансий")
+
+    def __lt__(self, other):
+        if isinstance(other, self.__class__):
+            return self.salary['from'] < other.salary['from']
+        raise ValueError("Можно сравнивать только объекты вакансий")
+
 
 class VacancySJ(Vacancy):
     """Класс вакансий с сайта SuperJob"""
+
+    def __init__(self, title: str, link: str, description: str, salary: dict) -> None:
+        self.title = title
+        self.link = link
+        self.description = description
+        self.salary = salary
 
     def __repr__(self):
         return (
@@ -76,7 +90,7 @@ class VacancySJ(Vacancy):
 
     @classmethod
     def get_data(cls) -> None:
-        with open('cache_hh.json', "r") as file:
+        with open(JSON_SJ, "r") as file:
             vacancy = json.load(file)
             vacancy_s = []
             for i in vacancy:
@@ -90,3 +104,13 @@ class VacancySJ(Vacancy):
                 )
         for vacancy in sorted(vacancy_s):
             print(vacancy)
+
+    def __gt__(self, other):
+        if isinstance(other, self.__class__):
+            return self.salary > other.salary
+        raise ValueError("Можно сравнивать только объекты вакансий")
+
+    def __lt__(self, other):
+        if isinstance(other, self.__class__):
+            return self.salary < other.salary
+        raise ValueError("Можно сравнивать только объекты вакансий")

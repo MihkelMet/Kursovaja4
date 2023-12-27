@@ -1,6 +1,6 @@
-from src.request.hh import RequestHH
-from src.request.sj import RequestsSJ
-from src.vacancy import VacancyHH, VacancySJ
+from src.API.hh import RequestHH
+from src.API.sj import RequestsSJ
+from src.vacancy.vacancy import VacancyHH, VacancySJ
 
 
 def dialog():
